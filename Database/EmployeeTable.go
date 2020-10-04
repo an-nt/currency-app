@@ -28,28 +28,10 @@ func (ms *MSSQL) CheckExist(user uint, pass string) (Model.Employee, error) {
 	}
 	switch len(empIndex) {
 	case 0:
-		return emp, NoPer()
+		return emp, dbError("Unauthorized")
 	case 1:
 		return emp, nil
 	default:
-		return emp, MulPerson()
+		return emp, dbError("Multiple results")
 	}
-}
-
-type MulPerErr struct{}
-
-func (e *MulPerErr) Error() string {
-	return "Multiple persons with the same ID"
-}
-func MulPerson() error {
-	return &MulPerErr{}
-}
-
-type NoPerErr struct{}
-
-func (e *NoPerErr) Error() string {
-	return "Unauthorized"
-}
-func NoPer() error {
-	return &NoPerErr{}
 }

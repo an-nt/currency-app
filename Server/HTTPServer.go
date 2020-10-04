@@ -1,7 +1,6 @@
 package Server
 
 import (
-	"CurrencyApp/API"
 	"log"
 	"net/http"
 	"time"
@@ -10,25 +9,22 @@ import (
 )
 
 type HttpServer struct {
-	UserServer
 	http.Server
+	LoginFormartter    ILoginFormatter
+	GetExRateFormatter IGetExRateFormatter
 }
 type IHttpServer interface {
 	StartServer()
 }
 
 func (sv *HttpServer) StartServer() {
-	//define a.apiLogin
-	if sv.IApi == nil {
-		sv.IApi = &API.Api{}
-	}
-
 	router := mux.NewRouter()
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Welcome to CURRENCY EXCHANGE app"))
 	})
-	router.HandleFunc("/v1/login", sv.IApi.Login).Methods("POST")
-	router.HandleFunc("/v1/exchangerates/{currencycode}", sv.IApi.GetExchangeRate).Methods("GET")
+	router.HandleFunc("/v1/login", sv.LoginFormartter.FormatLogin).Methods("POST")
+
+	router.HandleFunc("/v1/exchangerates/{currencycode}", sv.GetExRateFormatter.FormatGetExRate).Methods("GET")
 
 	sv.Handler = router
 	sv.Addr = ":8080"
