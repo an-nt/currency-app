@@ -1,7 +1,6 @@
 package Server
 
 import (
-	"CurrencyApp/API"
 	"encoding/json"
 	"net/http"
 )
@@ -10,19 +9,12 @@ type LoginInput struct {
 	ID   uint   `json:"id"`
 	Pass string `json:"pass"`
 }
-type LoginFormatter struct {
-	Handler API.IExecLogin
-}
 
-type ILoginFormatter interface {
-	FormatLogin(w http.ResponseWriter, r *http.Request)
-}
-
-func (f *LoginFormatter) FormatLogin(w http.ResponseWriter, r *http.Request) {
+func (sv *HttpServer) FormatLogin(w http.ResponseWriter, r *http.Request) {
 	var input LoginInput
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
-		resp := FmResp{
+		resp := ResponseFormat{
 			Message: "invalid type",
 			Detail:  nil,
 		}
@@ -30,9 +22,9 @@ func (f *LoginFormatter) FormatLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := f.Handler.Login(input.ID, input.Pass)
+	token, err := sv.Exec.Login(input.ID, input.Pass)
 	if err != nil {
-		resp := FmResp{
+		resp := ResponseFormat{
 			Message: err.Error(),
 			Detail:  nil,
 		}
@@ -40,7 +32,7 @@ func (f *LoginFormatter) FormatLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := FmResp{
+	resp := ResponseFormat{
 		Message: "Success",
 		Detail:  token,
 	}

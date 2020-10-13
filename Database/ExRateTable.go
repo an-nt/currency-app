@@ -2,10 +2,6 @@ package Database
 
 import "CurrencyApp/Model"
 
-type IGetExRate interface {
-	GetExRate() (uint, error)
-}
-
 func (ms *MSSQL) GetExRate() (uint, error) {
 	var rate Model.USDVND
 

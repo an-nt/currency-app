@@ -1,29 +1,27 @@
 package API
 
 import (
-	"CurrencyApp/Database"
+	"errors"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
-type ExecLogin struct {
-	Checker Database.ICheckExist
-}
-type IExecLogin interface {
-	Login(user uint, pass string) (string, error)
-}
-
-func (e *ExecLogin) Login(user uint, pass string) (string, error) {
-	staff, err := e.Checker.CheckExist(user, pass)
+func (a *Api) Login(user uint, pass string) (string, error) {
+	storedpass, err := a.DbAccess.GetStoredPassword(user)
 	if err != nil {
 		return "", err
 	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(storedpass), []byte(pass))
+	if err != nil {
+		return "", errors.New("Unauthenticated")
+	}
+
 	claim := Claims{
-		ID:          staff.ID,
-		Name:        staff.FullName,
-		Male:        staff.Male,
-		Nationality: staff.Nationality,
+		ID: user,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(300 * time.Second).Unix(),
 		},

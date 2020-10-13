@@ -1,24 +1,16 @@
 package API
 
 import (
-	"CurrencyApp/Database"
+	"errors"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
-type ExecGetExRate struct {
-	Finder Database.IGetExRate
-}
-
-type IExecGetExRate interface {
-	GetExRate(token string) (uint, error)
-}
-
-func (e *ExecGetExRate) GetExRate(token string) (uint, error) {
+func (a *Api) GetExRate(token string) (uint, error) {
 	if !isAuthenticated(token) {
-		return 0, execError("Unauthenticated")
+		return 0, errors.New("Unauthenticated")
 	}
-	rate, err := e.Finder.GetExRate()
+	rate, err := a.DbAccess.GetExRate()
 	if err != nil {
 		return 0, err
 	}

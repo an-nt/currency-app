@@ -2,12 +2,9 @@ package Database
 
 import (
 	"CurrencyApp/Model"
+	"errors"
 	"fmt"
 )
-
-type ICheckExist interface {
-	CheckExist(user uint, pass string) (Model.Employee, error)
-}
 
 func (ms *MSSQL) CheckExist(user uint, pass string) (Model.Employee, error) {
 	var emp Model.Employee
@@ -28,10 +25,35 @@ func (ms *MSSQL) CheckExist(user uint, pass string) (Model.Employee, error) {
 	}
 	switch len(empIndex) {
 	case 0:
-		return emp, dbError("Unauthorized")
+		return emp, errors.New("Unauthorized")
 	case 1:
 		return emp, nil
 	default:
-		return emp, dbError("Multiple results")
+		return emp, errors.New("Multiple results")
+	}
+}
+
+func (ms *MSSQL) GetStoredPassword(user uint) (string, error) {
+	var HashedPass string
+	var PassArray []string
+	query := fmt.Sprintf("SELECT Password FROM dbo.Employee WHERE ID = %d", user)
+	rows, err := ms.Db.Query(query)
+	if err != nil {
+		return "", err
+	}
+	for rows.Next() {
+		err = rows.Scan(&HashedPass)
+		if err != nil {
+			return "", err
+		}
+		PassArray = append(PassArray, HashedPass)
+	}
+	switch len(PassArray) {
+	case 0:
+		return "", errors.New("Unauthorized")
+	case 1:
+		return HashedPass, nil
+	default:
+		return "", errors.New("Multiple results")
 	}
 }

@@ -7,24 +7,22 @@ import (
 	"fmt"
 )
 
+var ubuntuhost = "192.168.255.1"
+var localhost = "127.0.0.1"
+
 func main() {
+	SetUp()
+}
+
+func SetUp() {
 	ms := Database.MSSQL{}
-	db, result := ms.Config("localhost", "sa", "khtn@2020", "1433", "Supermarket").Connect()
+	db, result := ms.Config(ubuntuhost, "sa", "khtn@2020", "1433", "Supermarket").Connect()
 	fmt.Println(result)
 
 	sv := Server.HttpServer{
-		LoginFormartter: &Server.LoginFormatter{
-			Handler: &API.ExecLogin{
-				Checker: &Database.MSSQL{
-					Database: Database.Database{db},
-				},
-			},
-		},
-		GetExRateFormatter: &Server.GetExRateFormatter{
-			Handler: &API.ExecGetExRate{
-				Finder: &Database.MSSQL{
-					Database: Database.Database{db},
-				},
+		Exec: &API.Api{
+			DbAccess: &Database.MSSQL{
+				Database: Database.Database{Db: db},
 			},
 		},
 	}
