@@ -14,4 +14,5 @@ type IDatabaseAccess interface {
 	CheckExist(user uint, pass string) (Model.Employee, error)
 	GetExRate() (uint, error)
 	GetStoredPassword(user uint) (string, error)
+	GetFirst(model interface{}) ([]interface{}, error)
 }

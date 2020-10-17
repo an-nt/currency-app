@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"time"
 
 	_ "github.com/denisenkom/go-mssqldb"
 )
@@ -30,6 +31,13 @@ func (ms *MSSQL) Connect() (*sql.DB, string) {
 	if err != nil {
 		return ms.Db, err.Error() //"Connection failed"
 	}
+
+	//Config connection pool
+	ms.Db.SetMaxIdleConns(5)
+	ms.Db.SetMaxOpenConns(10)
+	ms.Db.SetConnMaxLifetime(60 * time.Hour)
+
+	//Varify database version
 	err = CheckVersion(ms.Db)
 	if err != nil {
 		return ms.Db, "Version incompatable"
