@@ -6,11 +6,21 @@ import (
 	"fmt"
 )
 
-func (ms *MSSQL) CheckExist(user uint, pass string) (Model.Employee, error) {
+func (ms *MSSQL) PostEmployeeRecord(user uint, pass string) error {
+	query := fmt.Sprintf(`INSERT dbo.Employee (ID, Password)
+						VALUES ("%s", "%s");`, user, pass)
+	_, err := ms.Db.Exec(query)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ms *MSSQL) GetEmployeeByID(user uint) (Model.Employee, error) {
 	var emp Model.Employee
 	var empIndex []Model.Employee
 
-	query := fmt.Sprintf("SELECT * FROM dbo.Employee WHERE ID = %d AND Password = '%s';", user, pass)
+	query := fmt.Sprintf("SELECT * FROM dbo.Employee WHERE ID = %d;", user)
 	rows, err := ms.Db.Query(query)
 	if err != nil {
 		return emp, err
@@ -33,7 +43,7 @@ func (ms *MSSQL) CheckExist(user uint, pass string) (Model.Employee, error) {
 	}
 }
 
-func (ms *MSSQL) GetStoredPassword(user uint) (string, error) {
+func (ms *MSSQL) GetPassByID(user uint) (string, error) {
 	var HashedPass string
 	var PassArray []string
 	query := fmt.Sprintf("SELECT Password FROM dbo.Employee WHERE ID = %d", user)

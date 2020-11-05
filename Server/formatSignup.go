@@ -5,14 +5,12 @@ import (
 	"net/http"
 )
 
-type LoginInput struct {
-	ID   uint   `json:"id"`
-	Pass string `json:"pass"`
-}
+func (sv *HttpServer) formatSignUp(w http.ResponseWriter, r *http.Request) {
+	var err error
+	var emp LoginInput
+	var result string
 
-func (sv *HttpServer) formatLogin(w http.ResponseWriter, r *http.Request) {
-	var input LoginInput
-	err := json.NewDecoder(r.Body).Decode(&input)
+	err = json.NewDecoder(r.Body).Decode(&emp)
 	if err != nil {
 		resp := ResponseFormat{
 			Message: "invalid type",
@@ -21,20 +19,20 @@ func (sv *HttpServer) formatLogin(w http.ResponseWriter, r *http.Request) {
 		resp.FormatResp(w, http.StatusBadRequest)
 		return
 	}
-
-	token, err := sv.Exec.Login(input.ID, input.Pass)
+	result, err = sv.Exec.SignUp(emp.ID, emp.Pass)
 	if err != nil {
 		resp := ResponseFormat{
 			Message: err.Error(),
 			Detail:  nil,
 		}
-		resp.FormatResp(w, http.StatusUnauthorized)
+		resp.FormatResp(w, http.StatusBadRequest)
 		return
 	}
 
 	resp := ResponseFormat{
-		Message: "Success",
-		Detail:  token,
+		Message: result,
+		Detail:  nil,
 	}
 	resp.FormatResp(w, http.StatusOK)
+	return
 }

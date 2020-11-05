@@ -5,7 +5,7 @@ import (
 	"reflect"
 )
 
-func (ms *MSSQL) GetExRate() (uint, error) {
+func (ms *MSSQL) GetExRateUsdVnd() (uint, error) {
 	var rate Model.USDVND
 
 	query := "select top 1 * from dbo.USDVND order by Time DESC"
@@ -26,7 +26,7 @@ func (ms *MSSQL) GetExRate() (uint, error) {
 	return rate.Exchange, nil
 }
 
-func (ms *MSSQL) GetFirst(model interface{}) ([]interface{}, error) {
+func (ms *MSSQL) GetFirstRecord(model interface{}) ([]interface{}, error) {
 	var rate Model.USDVND
 	reflecter := reflect.TypeOf(model)
 	numFields := reflecter.NumField()

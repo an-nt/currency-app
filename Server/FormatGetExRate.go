@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func (sv *HttpServer) FormatGetExRate(w http.ResponseWriter, r *http.Request) {
+func (sv *HttpServer) formatGetExRate(w http.ResponseWriter, r *http.Request) {
 	token := r.Header.Get("Authorization")
 	rate, err := sv.Exec.GetExRate(token)
 	if err != nil {

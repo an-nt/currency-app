@@ -22,9 +22,11 @@ func (sv *HttpServer) StartServer() {
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Welcome to CURRENCY EXCHANGE app"))
 	})
-	router.HandleFunc("/v1/login", sv.FormatLogin).Methods("POST")
+	router.HandleFunc("/v1/account", sv.formatSignUp).Methods("POST")
 
-	router.HandleFunc("/v1/exchangerates/{currencycode}", sv.FormatGetExRate).Methods("GET")
+	router.HandleFunc("/v1/login", sv.formatLogin).Methods("POST")
+
+	router.HandleFunc("/v1/exchangerates/{currencycode}", sv.formatGetExRate).Methods("GET")
 
 	sv.Handler = router
 	sv.Addr = ":8080"

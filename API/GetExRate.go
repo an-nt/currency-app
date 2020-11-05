@@ -10,7 +10,7 @@ func (a *Api) GetExRate(token string) (uint, error) {
 	if !isAuthenticated(token) {
 		return 0, errors.New("Unauthenticated")
 	}
-	rate, err := a.DbAccess.GetExRate()
+	rate, err := a.DbAccess.GetExRateUsdVnd()
 	if err != nil {
 		return 0, err
 	}

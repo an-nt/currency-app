@@ -11,4 +11,5 @@ type Api struct {
 type IApi interface {
 	Login(user uint, pass string) (string, error)
 	GetExRate(token string) (uint, error)
+	SignUp(user uint, pass string) (string, error)
 }

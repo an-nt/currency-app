@@ -1,9 +1,6 @@
 package Server
 
 import (
-	"io/ioutil"
-	"io"
-	"net/http"
 	"testing"
 )
 
@@ -14,10 +11,5 @@ func (m *Mock) Login(user uint, pass string) (string, error) {
 }
 
 func TestFormatLogin(t *testing.T) {
-	var formatter LoginFormatter
-	formatter.Handler = &Mock{}
-	reqBody := `"ID"`
-	ioutil.
-	req := http.NewRequest("POST", "http://localhost:8080/v1/login", io.Reader)
 
 }

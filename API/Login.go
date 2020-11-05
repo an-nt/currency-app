@@ -10,7 +10,7 @@ import (
 )
 
 func (a *Api) Login(user uint, pass string) (string, error) {
-	storedpass, err := a.DbAccess.GetStoredPassword(user)
+	storedpass, err := a.DbAccess.GetPassByID(user)
 	if err != nil {
 		return "", err
 	}
