@@ -14,16 +14,20 @@ const (
 
 func (a *Api) SignUp(user uint, pass string) (string, error) {
 	var err error
-	var emp Model.Employee
+	var emp []Model.Employee
 	var hash []byte
 
 	emp, err = a.DbAccess.GetEmployeeByID(user)
 	if err != nil {
 		return signUpFailed, err
 	}
-	if emp.ID == user {
+	if len(emp) != 0 && len(emp) != 1 {
+		return signUpFailed, errors.New("Internal error")
+	}
+	if len(emp) == 1 {
 		return signUpFailed, errors.New("Member ID has been existed")
 	}
+
 	hash, err = bcrypt.GenerateFromPassword([]byte(pass), 12)
 	if err != nil {
 		return signUpFailed, err

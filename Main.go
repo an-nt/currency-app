@@ -9,6 +9,7 @@ import (
 
 var ubuntuhost = "192.168.255.1"
 var localhost = "127.0.0.1"
+var containerhost = "172.18.0.2"
 
 func main() {
 	SetUp()
@@ -16,15 +17,15 @@ func main() {
 
 func SetUp() {
 	ms := Database.MSSQL{}
-	db, result := ms.Config(ubuntuhost, "sa", "khtn@2020", "1433", "Supermarket").Connect()
+	db, result := ms.Config(containerhost, "sa", "khtn@2020", "1234", "Supermarket").Connect()
 
 	fmt.Println(result)
 
+	mssql := &Database.MSSQL{}
+	mssql.Db = db
 	sv := Server.HttpServer{
 		Exec: &API.Api{
-			DbAccess: &Database.MSSQL{
-				Database: db.Database,
-			},
+			DbAccess: mssql,
 		},
 	}
 	sv.StartServer()

@@ -8,7 +8,7 @@ import (
 
 func (ms *MSSQL) PostEmployeeRecord(user uint, pass string) error {
 	query := fmt.Sprintf(`INSERT dbo.Employee (ID, Password)
-						VALUES ("%s", "%s");`, user, pass)
+						VALUES (%d, '%s')`, user, pass)
 	_, err := ms.Db.Exec(query)
 	if err != nil {
 		return err
@@ -16,14 +16,14 @@ func (ms *MSSQL) PostEmployeeRecord(user uint, pass string) error {
 	return nil
 }
 
-func (ms *MSSQL) GetEmployeeByID(user uint) (Model.Employee, error) {
+func (ms *MSSQL) GetEmployeeByID(user uint) ([]Model.Employee, error) {
 	var emp Model.Employee
 	var empIndex []Model.Employee
 
 	query := fmt.Sprintf("SELECT * FROM dbo.Employee WHERE ID = %d;", user)
 	rows, err := ms.Db.Query(query)
 	if err != nil {
-		return emp, err
+		return empIndex, err
 	}
 
 	for rows.Next() {
@@ -33,14 +33,7 @@ func (ms *MSSQL) GetEmployeeByID(user uint) (Model.Employee, error) {
 		}
 		empIndex = append(empIndex, emp)
 	}
-	switch len(empIndex) {
-	case 0:
-		return emp, errors.New("Unauthorized")
-	case 1:
-		return emp, nil
-	default:
-		return emp, errors.New("Multiple results")
-	}
+	return empIndex, nil
 }
 
 func (ms *MSSQL) GetPassByID(user uint) (string, error) {
